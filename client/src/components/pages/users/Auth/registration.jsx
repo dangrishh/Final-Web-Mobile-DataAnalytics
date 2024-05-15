@@ -10,6 +10,9 @@ function RegistrationForm() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // State for showing/hiding password
     const [message, setMessage] = useState('');
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    const [registrationError, setRegistrationError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
     const handleFullnameChange = (e) => {
@@ -42,10 +45,15 @@ function RegistrationForm() {
 
         // Validate passwords match
         if (password !== confirmPassword) {
-            setMessage('Passwords do not match');
+            setRegistrationError(true);
+            setErrorMessage("Passwords do not match");
+            // Clear the error message after 3 seconds
+            setTimeout(() => {
+                setRegistrationError(false);
+            }, 3000);
             return;
         }
-        
+
         try {
             const response = await axios.post('http://localhost:5000/signup', {
                 fullname,
@@ -54,29 +62,41 @@ function RegistrationForm() {
                 password,
             });
 
-            alert('Registration successful!');
-            setMessage(response.data.message);
-            // Navigate to the login page after successful registration
-            navigate('/login');
+            // Registration successful
+            setRegistrationSuccess(true);
+            setMessage('Registration successful! Redirecting to login...');
+            
+            // Clear the success message after 3 seconds
+            setTimeout(() => {
+                setRegistrationSuccess(false);
+                navigate('/login');
+            }, 3000);
+            
         } catch (error) {
-            console.error('Registration failed:', error.response?.data?.message || error.message);
-            setMessage(error.response?.data?.message || 'An error occurred');
+            // Registration failed
+            setRegistrationError(true);
+            setErrorMessage(error.response?.data?.message || 'An error occurred');
+            
+            // Clear the error message after 3 seconds
+            setTimeout(() => {
+                setRegistrationError(false);
+            }, 3000);
         }
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-dark-gray-800">
-            <form onSubmit={handleSubmit} className="w-full max-w-md bg-gray-900 rounded-lg shadow-lg p-8">
-                <h3 className="mb-3 text-4xl font-extrabold text-white text-center">Register</h3>
-                <p className="mb-4 text-gray-400 text-center">Create your account</p>
+        <div className="flex items-center justify-center h-screen bg-dark-gray-800 p-4 sm:p-6 md:p-8 lg:p-10">
+            <form onSubmit={handleSubmit} className="w-full max-w-md bg-gray-900 rounded-lg shadow-lg p-6 sm:p-8">
+                <h3 className="mb-3 text-2xl font-extrabold text-white text-center">Register</h3>
+                <p className="mb-4 text-sm text-gray-400 text-center">Create your account</p>
                 
                 <div className="mb-3">
-                    <label htmlFor="fullname" className="block text-sm font-medium text-white">Fullname*</label>
+                    <label htmlFor="fullname" className="block text-sm font-medium text-white">Full Name*</label>
                     <input
                         id="fullname"
                         type="text"
                         placeholder="John Doe"
-                        className="w-full px-4 py-3 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
+                        className="w-full px-3 py-2 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
                         value={fullname}
                         onChange={handleFullnameChange}
                     />
@@ -88,7 +108,7 @@ function RegistrationForm() {
                         id="username"
                         type="text"
                         placeholder="Choose a username"
-                        className="w-full px-4 py-3 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
+                        className="w-full px-3 py-2 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
                         value={username}
                         onChange={handleUsernameChange}
                     />
@@ -99,8 +119,8 @@ function RegistrationForm() {
                     <input
                         id="email"
                         type="email"
-                        placeholder="mail@loopple.com"
-                        className="w-full px-4 py-3 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
+                        placeholder="email@example.com"
+                        className="w-full px-3 py-2 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
                         value={email}
                         onChange={handleEmailChange}
                     />
@@ -113,14 +133,14 @@ function RegistrationForm() {
                             id="password"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Enter a password"
-                            className="w-full px-4 py-3 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
+                            className="w-full px-3 py-2 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
                             value={password}
                             onChange={handlePasswordChange}
                         />
                         <button
                             type="button"
                             onClick={toggleShowPassword}
-                            className="absolute inset-y-0 right-0 flex items-center px-3 text-white"
+                            className="absolute inset-y-0 right-0 flex items-center px-2 text-white"
                         >
                             {showPassword ? 'Hide' : 'Show'}
                         </button>
@@ -129,33 +149,59 @@ function RegistrationForm() {
                 
                 <div className="mb-3">
                     <label htmlFor="confirmPassword" className="block text-sm font-medium text-white">Confirm Password*</label>
-                    <div className="relative">
+                    <div class="relative">
                         <input
                             id="confirmPassword"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Confirm your password"
-                            className="w-full px-4 py-3 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
+                            className="w-full px-3 py-2 mt-1 text-sm bg-gray-700 text-white rounded-lg focus:outline-none focus:border-purple-blue-500"
                             value={confirmPassword}
                             onChange={handleConfirmPasswordChange}
                         />
                         <button
                             type="button"
                             onClick={toggleShowPassword}
-                            className="absolute inset-y-0 right-0 flex items-center px-3 text-white"
+                            className="absolute inset-y-0 right-0 flex items-center px-2 text-white"
                         >
                             {showPassword ? 'Hide' : 'Show'}
                         </button>
                     </div>
                 </div>
 
-                <button type="submit" className="w-full py-3 text-sm font-bold leading-none text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:bg-purple-600">
+                <button type="submit" className="w-full py-2 text-sm font-bold leading-none text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:bg-purple-600">
                     Register
                 </button>
 
+                {/* Success alert */}
+                {registrationSuccess && (
+                    <div role="alert" className="alert alert-success mt-4 p-3 rounded-md bg-green-600 text-white">
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="shrink-0 h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Registration successful! Redirecting to login...</span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Error alert */}
+                {registrationError && (
+                    <div role="alert" className="alert alert-error mt-4 p-3 rounded-md bg-red-600 text-white">
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="shrink-0 h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Error! {errorMessage}</span>
+                        </div>
+                    </div>
+                )}
+
                 <p className="mt-4 text-sm text-center text-gray-400">{message}</p>
                 <p className="mt-4 text-sm text-center text-gray-400">
+
                     Already have an account? <a href="/login" className="font-bold text-purple-blue-500 hover:text-purple-blue-600">Sign In</a>
                 </p>
+
             </form>
         </div>
     );

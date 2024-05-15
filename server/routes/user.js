@@ -2,19 +2,17 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user');
 
-router.get('/', userController.getHome); // Home page
 
-router.get('/dashboard', userController.authentication, userController.getDashboard); // Secret page (requires authentication)
+// Define routes and link them to controller functions
+router.post('/login', userController.login);
+router.post('/forget-password', userController.forgetPassword);
+router.post('/reset-password/:token', userController.resetPassword);
+router.post('/signup', userController.signup);
 
-router.route('/register')
-    .get(userController.getRegister) // Register form
-    .post(userController.postRegister); // Handle user signup
-
-router.route('/login')
-    .get(userController.getLogin) // Login form
-    .post(userController.postLogin); // Handle user login
-
-    
-router.get('/logout', userController.logout); // Logout
+// Define a protected route
+router.get('/protected-route', userController.authenticateToken, (req, res) => {
+    res.json({ message: 'This is a protected route!' });
+});
 
 module.exports = router;
+

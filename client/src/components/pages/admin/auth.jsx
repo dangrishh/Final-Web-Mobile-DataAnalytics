@@ -20,7 +20,7 @@ function AuthAdmin() {
 
         try {
             // Send the authentication request to the backend
-            const response = await axios.post('http://localhost:5000/auth/login', {
+            const response = await axios.post('http://localhost:5000/admin/auth', {
                 username,
                 password,
             });

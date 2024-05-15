@@ -59,6 +59,8 @@ function ResetPassword() {
                 </div>
                 <button type="submit" className="w-full py-3 text-sm font-bold leading-none text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:bg-purple-600">Reset Password</button>
                 <p className="mt-4 text-sm text-center text-white">{message}</p>
+
+                
             </form>
         </div>
     );

@@ -1,33 +1,9 @@
 const express = require('express');
-const path = require('path');
-
-
 const router = express.Router();
+// Import the controller function
+const adminController = require('../controllers/admin')
 
-const adminControler = require('../controllers/admin');
-
-
-router.route('/')
-   .get(adminControler.getLogin) //get request
-   .post(adminControler.postLogin) // post request
-
-router.get('/logout',adminControler.logout) //get request   
-/* 
-router.post('/changestatus',adminControler.postChnageStatus)// post change status
-
-router.route('/addhotel')
-      .get(adminControler.getAddHotel) // get request for hotel add page
-      .post(adminControler.postAddHotel) // post request for hotel add to db
-
-router.route('/search')
-      .get(adminControler.getSearch)   // get request   
-      .post(adminControler.postSearch) // post request
-
-router.route('/update')
-      .post(adminControler.getUpdate) //get update page for post request
-            
-router.route('/updateData')
-      .post(adminControler.updatePrevData) // update prev data      
- */
+// Define the route and specify the controller function
+router.post('/auth', adminController.login);
 
 module.exports = router;

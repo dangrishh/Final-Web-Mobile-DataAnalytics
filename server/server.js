@@ -1,23 +1,5 @@
 const express = require("express");
-
-// database
 const dbConnect = require("./model/dbConnect");
-
-// Users
-const User = require("./model/users/userModel"); // Import your User model
-
-// Admin
-const AuthAdmin = require("./model/admin/adminAuth"); // Import your Admin model
-
-
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
-
-const bcrypt = require('bcrypt');
-
-const jwt = require('jsonwebtoken');
-const secretKey = 'your-secret-key'; // Use a secure key and don't expose it in production code
-
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,8 +14,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
-// Configure nodemailer
+/* // Configure nodemailer
 const transporter = nodemailer.createTransport({
     service: 'Gmail', // Change this to your email service
     auth: {
@@ -172,13 +153,12 @@ app.post('/signup', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
-
+ */
 
 app.get("/", (req, res) => {
     res.send("Welcome to the server");
 });
-
-// Login route
+/* // Login route
 app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -204,9 +184,16 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+ */
+// Import the authRoutes module
+const adminRoutes = require('./routes/admin');
+const userRoutes = require('./routes/user');
 
+// Use the authRoutes
+app.use("/admin", adminRoutes);
+app.use(userRoutes);
 
-//Login Admin Auth Route
+/* //Login Admin Auth Route
 app.post('/auth/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -227,7 +214,7 @@ app.post('/auth/login', async (req, res) => {
         console.error('Error logging in:', error);
         res.status(500).json({ message: 'Server error' });
     }
-});
+}); */
 
 
 // Start the server
